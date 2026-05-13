@@ -29,3 +29,7 @@ The project is set up to use `postcss-cli` to process your CSS files. You can ad
 ## Contributing
 
 Contributions are welcome! If you have any suggestions or find any issues, please feel free to open an issue or a pull request.
+=======
+# StudyGen-Edtech
+StudyGen is a full-stack MERN-based EdTech platform that provides a seamless online learning experience through structured courses, secure authentication, video-based learning, progress tracking, and integrated payment functionality.
+
