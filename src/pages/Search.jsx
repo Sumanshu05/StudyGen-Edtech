@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiConnector } from "../services/apiconnector";
 import { courseEndpoints } from "../services/apis";
-import Course_Card from "../components/core/Catalog/Course_Card";
-import Footer from "../components/common/Footer";
+import CourseCard from "../components/core/Catalog/Course_Card";
 
 const Search = () => {
     const { searchQuery } = useParams();
@@ -55,7 +54,7 @@ const Search = () => {
                 ) : courses.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {courses.map((course, index) => (
-                            <Course_Card course={course} key={index} Height={"h-[250px]"} />
+                            <CourseCard course={course} key={index} Height={"h-[250px]"} />
                         ))}
                     </div>
                 ) : (

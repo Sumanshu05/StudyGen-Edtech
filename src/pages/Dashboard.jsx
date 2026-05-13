@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { Outlet } from 'react-router-dom';
 
 import Sidebar from '../components/core/Dashboard/Sidebar';
-import { VscChevronRight, VscChevronLeft } from "react-icons/vsc";
 
 const Dashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
