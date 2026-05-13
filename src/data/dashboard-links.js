@@ -5,7 +5,6 @@ import {
   VscAdd,
   VscMortarBoard,
   VscHistory,
-  VscSettingsGear,
   VscBookmark,
 } from "react-icons/vsc";
 

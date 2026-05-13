@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useState } from "react";
-import Footer from "../components/common/Footer";
 import { useParams } from "react-router-dom";
 import { apiConnector } from "../services/apiconnector";
 import { categories } from "../services/apis";
