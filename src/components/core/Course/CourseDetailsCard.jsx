@@ -4,7 +4,7 @@ import { MdOutlineOndemandVideo } from "react-icons/md";
 import { BsInfinity, BsTrophy } from "react-icons/bs";
 import { TbDeviceMobileCheck } from "react-icons/tb";
 import { toast } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import {useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const CourseDetailsCard = ({
