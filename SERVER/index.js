@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:3000"] : "http://localhost:3000",
+        origin: ["https://studygen-edtech.vercel.app", "http://localhost:3000"],
         credentials: true,
     })
 )

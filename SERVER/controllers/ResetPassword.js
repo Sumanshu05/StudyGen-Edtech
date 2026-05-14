@@ -44,7 +44,7 @@ exports.resetPasswordToken = async (req, res) => {
         console.log("DETAILS" , updatedDetails);
 
         //create url
-        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+        const frontendUrl = "https://studygen-edtech.vercel.app";
         const url = `${frontendUrl}/update-password/${token}`;
 
         //send email contianing the url
