@@ -1,12 +1,12 @@
 const User = require("../models/User");
-const OTP = require("../models/OTP");
-const otpGenerator = require("otp-generator");
 const Profile = require("../models/Profile");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mailSender = require("../utils/mailSender");
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
+const twilio = require("twilio");
+const twilioClient = twilio(process.env.TWILIO_API_KEY, process.env.TWILIO_API_SECRET, { accountSid: process.env.TWILIO_ACCOUNT_SID });
 
 //sendOTP
 exports.sendOTP = async (req, res) => {
@@ -26,37 +26,17 @@ exports.sendOTP = async (req, res) => {
             })
         }
 
-        //generate the otp
-        var otp = otpGenerator.generate(6, {
-            upperCaseAlphabets: false,
-            lowerCaseAlphabets: false,
-            specialChars: false,
-        });
+        // Send OTP via Twilio Verify
+        const verification = await twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+            .verifications
+            .create({to: email, channel: 'email'});
 
-        //check unique otp or not 
-        let result = await OTP.findOne({ otp: otp });
-        console.log("OTP generated: ", otp);
-
-        while (result) {
-            otp = otpGenerator.generate(6, {
-                upperCaseAlphabets: false,
-                lowerCaseAlphabets: false,
-                specialChars: false,
-            });
-            result = await OTP.findOne({ otp: otp });
-        }
-
-        const otpPayload = { email, otp };
-
-        //create an entry for OTP
-        const otpBody = await OTP.create(otpPayload);
-        console.log("OTP Body" , otpBody);
+        console.log("Twilio verification status:", verification.status);
 
         //return response successful 
         res.status(200).json({
             success: true,
             message: `OTP Sent Successfully`,
-            otp,
         })
     }
     catch (error) {
@@ -116,20 +96,12 @@ exports.signUp = async (req, res) => {
             });
         }
 
-        //find most recent OTP stored for the user 
-        const response = await OTP.find({ email })
-        .sort({ createdAt: -1 })
-        .limit(1);
-        console.log(response);
-        //validate OTP
-        if (response.length === 0) {
-            //OTP not found for the email
-            return res.status(400).json({
-                success: false,
-                message: 'The OTP is not valid',
-            })
-        } else if (otp !== response[0].otp) {
-            //Invalid OTP 
+        //validate OTP using Twilio
+        const verificationCheck = await twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+            .verificationChecks
+            .create({to: email, code: otp});
+
+        if (verificationCheck.status !== 'approved') {
             return res.status(400).json({
                 success: false,
                 message: 'The OTP is not valid',
