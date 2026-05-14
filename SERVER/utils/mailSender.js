@@ -4,6 +4,8 @@ const mailSender = async(email , title , body) => {
     try{
         let transpoter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS,
@@ -11,10 +13,10 @@ const mailSender = async(email , title , body) => {
         })
 
         let info = await transpoter.sendMail({
-            from: 'StudyGen || Sumanshu Nagpal',
+            from: `"StudyGen | Sumanshu Nagpal" <${process.env.MAIL_USER}>`,
             to: `${email}`,
             subject: `${title}`,
-            html: `${body},`
+            html: `${body}`,
         })
         console.log(info);
         return info;
