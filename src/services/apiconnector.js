@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const axiosInstance = axios.create({});
+export const axiosInstance = axios.create({ timeout: 15000 }); // 15s — prevents infinite loading
 
 export const apiConnector = (method , url , bodyData , headers , params) => {
     return axiosInstance ({

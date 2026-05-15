@@ -6,6 +6,9 @@ const mailSender = async(email , title , body) => {
             host: process.env.MAIL_HOST,
             port: 587,
             secure: false,
+            connectionTimeout: 10000,  // 10s — fail fast instead of hanging
+            greetingTimeout: 10000,
+            socketTimeout: 10000,
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS,
