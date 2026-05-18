@@ -2,17 +2,15 @@ const nodemailer = require("nodemailer");
 
 const mailSender = async (email, title, body) => {
     try {
-        // Brevo (formerly Sendinblue) SMTP relay — reliable on cloud hosts like Render
+        // Gmail SMTP — works reliably with a Gmail App Password
+        // Generate App Password at: myaccount.google.com/apppasswords
         let transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,   // smtp-relay.brevo.com
-            port: 587,
-            secure: false,                 // STARTTLS (Brevo uses port 587)
-            connectionTimeout: 30000,
-            greetingTimeout: 30000,
-            socketTimeout: 30000,
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,   // SSL on port 465
             auth: {
-                user: process.env.MAIL_USER,  // Your Brevo login email
-                pass: process.env.MAIL_PASS,  // Brevo SMTP Key (from Settings > SMTP & API)
+                user: process.env.MAIL_USER?.trim(),         // Your Gmail address
+                pass: process.env.MAIL_PASS?.replace(/\s/g, ""),  // Strip spaces — Google shows App Passwords with spaces for readability
             },
         });
 
@@ -23,11 +21,11 @@ const mailSender = async (email, title, body) => {
             html: `${body}`,
         });
 
-        console.log("Mail sent via Brevo:", info.response);
+        console.log("Mail sent via Gmail:", info.response);
         return info;
     } catch (error) {
-        console.error("mailSender error:", error.message);
-        // Do not re-throw — callers handle missing email gracefully
+        console.error("mailSender ERROR:", error.message);
+        throw error;  // Re-throw so callers can see actual failures
     }
 };
 
