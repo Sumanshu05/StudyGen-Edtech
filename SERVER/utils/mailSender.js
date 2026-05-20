@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const { Resend } = require("resend");
 
 const mailSender = async (email, title, body) => {
+    const brevoApiKey = process.env.BREVO_API_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
     const mailUser = process.env.MAIL_USER?.trim();
     const mailPass = process.env.MAIL_PASS?.replace(/\s/g, "");
@@ -12,6 +13,49 @@ const mailSender = async (email, title, body) => {
     console.log("MAIL_USER:", mailUser || "❌ UNDEFINED");
     console.log("MAIL_PASS length:", mailPass ? mailPass.length : "❌ UNDEFINED");
     console.log("Sending to:", email);
+
+    // 1. Primary: Try Brevo (since it is free and allows sending to anyone without custom domain)
+    if (brevoApiKey) {
+        try {
+            console.log("Sending mail via Brevo HTTP API...");
+            const url = 'https://api.brevo.com/v3/smtp/email';
+            
+            // Check if there is a custom sender email specified, otherwise use default MAIL_USER
+            const fromEmail = process.env.BREVO_FROM_EMAIL || mailUser || "info@studygen.com";
+            const fromName = process.env.BREVO_FROM_NAME || "StudyGen";
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': brevoApiKey,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: fromName, email: fromEmail },
+                    to: [{ email: email }],
+                    subject: title,
+                    htmlContent: body
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || JSON.stringify(result));
+            }
+
+            console.log("✅ Mail sent via Brevo, message ID:", result.messageId);
+            return {
+                response: `Brevo sent successfully (ID: ${result.messageId})`,
+                id: result.messageId,
+                data: result
+            };
+        } catch (error) {
+            console.error("❌ Brevo failed:", error.message);
+            // If Brevo failed, fall through to other senders
+        }
+    }
 
     if (resendApiKey) {
         try {
@@ -86,7 +130,7 @@ const mailSender = async (email, title, body) => {
             throw error;
         }
     } else {
-        throw new Error("No mail configuration found. Please set RESEND_API_KEY or Gmail credentials.");
+        throw new Error("No mail configuration found. Please set BREVO_API_KEY, RESEND_API_KEY, or Gmail credentials.");
     }
 };
 
