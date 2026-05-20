@@ -2,8 +2,8 @@ const nodemailer = require("nodemailer");
 const { Resend } = require("resend");
 
 const mailSender = async (email, title, body) => {
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
     const mailUser = process.env.MAIL_USER?.trim();
     const mailPass = process.env.MAIL_PASS?.replace(/\s/g, "");
 
