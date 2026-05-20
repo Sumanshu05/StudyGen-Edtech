@@ -34,17 +34,16 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
-// Pre-save hook — send email and wait for it to complete before saving
+// Pre-save hook — send email in the background without blocking the database save
 OTPSchema.pre("save", async function (next) {
     console.log("New OTP document being saved to database");
 
     // Only send email for new documents
     if (this.isNew) {
-        try {
-            await sendVerificationEmail(this.email, this.otp);
-        } catch (error) {
+        // Fire-and-forget: do not await so the API call does not hang or timeout.
+        sendVerificationEmail(this.email, this.otp).catch((error) => {
             console.error("Background email failed:", error.message);
-        }
+        });
     }
 
     next();

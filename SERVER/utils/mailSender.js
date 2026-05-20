@@ -62,6 +62,9 @@ const mailSender = async (email, title, body) => {
                     user: mailUser,
                     pass: mailPass,
                 },
+                connectionTimeout: 3000, // 3 seconds timeout
+                greetingTimeout: 3000,   // 3 seconds timeout
+                socketTimeout: 3000,     // 3 seconds timeout
             });
 
             // Verify SMTP connection before sending
