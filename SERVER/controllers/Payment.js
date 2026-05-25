@@ -62,6 +62,7 @@ exports.capturePayment = async (req, res) => {
     res.json({
       success: true,
       data: paymentResponse,
+      razorpayKey: process.env.RAZORPAY_KEY,
     });
   } catch (error) {
     console.log(error);
