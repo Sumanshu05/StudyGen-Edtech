@@ -51,6 +51,8 @@ export async function buyCourse(token, courses, userDetails, navigate, dispatch)
       throw new Error(orderResponse.data.message)
     }
 
+    console.log("PAYMENT RESPONSE FROM BACKEND:", orderResponse.data);
+
     const options = {
       key: orderResponse.data.razorpayKey || process.env.REACT_APP_RAZORPAY_KEY,
       currency: orderResponse.data.data.currency,
