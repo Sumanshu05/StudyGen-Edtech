@@ -62,7 +62,7 @@ exports.capturePayment = async (req, res) => {
     res.json({
       success: true,
       data: paymentResponse,
-      razorpayKey: process.env.RAZORPAY_KEY,
+      razorpayKey: process.env.RAZORPAY_KEY?.trim(),
     });
   } catch (error) {
     console.log(error);
@@ -90,7 +90,7 @@ exports.verifyPayment = async (req, res) => {
 
   let body = razorpay_order_id + "|" + razorpay_payment_id;
   const expectedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_SECRET)
+    .createHmac("sha256", process.env.RAZORPAY_SECRET?.trim())
     .update(body.toString())
     .digest("hex");
 
